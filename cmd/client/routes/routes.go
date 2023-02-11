@@ -8,7 +8,6 @@ import (
 
 func RegisterRouter(client pb.MovieServiceClient) *gin.Engine {
 	r := gin.Default()
-	r.SetTrustedProxies([]string{"192.168.72.1"})
 
 	d := delivery.NewDelivery(client)
 
