@@ -1,0 +1,62 @@
+syntax="proto3";
+
+package proto;
+
+option go_package="github.com/zakirkun/grpc-crud";
+
+message Movie {
+    string id=1;
+    string title=2;
+    string genre=3;
+    string description=4;
+    string thumbnail=5;
+}
+
+message CreateMovieRequest {
+    Movie movie=1;
+}
+
+message CreateMovieResponse {
+    Movie movie=1;
+}
+
+message ReadMovieRequest {
+    string id = 1;
+}
+
+message ReadMovieResponse {
+    Movie movie = 1;
+}
+
+message ReadMoviesRequest {
+
+}
+
+message ReadMoviesResponse {
+    repeated Movie movies=1;
+}
+
+message UpdateMovieRequest{
+    Movie movie =1;
+}
+
+message UpdateMovieResponse{
+    Movie movie =1;
+}
+
+message DeleteMovieRequest{
+    string id =1;
+}
+
+message DeleteMovieResponse{
+    bool success =1;
+}
+
+
+service MovieService {
+    rpc CreateMovie(CreateMovieRequest) returns (CreateMovieResponse){}
+    rpc GetMovie(ReadMovieRequest) returns (ReadMovieResponse) {}
+    rpc GetMovies(ReadMoviesRequest) returns (ReadMoviesResponse) {}
+    rpc UpdateMovie(UpdateMovieRequest) returns (UpdateMovieResponse) {}
+    rpc DeleteMovie(DeleteMovieRequest) returns (DeleteMovieResponse) {}
+}
