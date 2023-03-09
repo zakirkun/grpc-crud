@@ -28,10 +28,20 @@ func (*ServerContext) CreateMovie(ctx context.Context, req *pb.CreateMovieReques
 
 	repo := new(repository.RepositoryContext)
 
-	err := repo.CreateMovie(data)
+	// make chan status
+	status := make(chan error)
+
+	go repo.CreateMovie(data, status)
+
+	// recive channel
+	err := <-status
+
 	if err != nil {
 		return nil, err
 	}
+
+	// close channel
+	close(status)
 
 	return &pb.CreateMovieResponse{
 		Movie: &pb.Movie{
@@ -48,10 +58,25 @@ func (*ServerContext) GetMovie(ctx context.Context, req *pb.ReadMovieRequest) (*
 
 	repo := new(repository.RepositoryContext)
 
-	err, getMovie := repo.FindMovie(req.GetId())
+	// make chan status
+	status := make(chan error)
+
+	// make chan movie data
+	data := make(chan *model.Movie)
+
+	go repo.FindMovie(req.GetId(), status, data)
+
+	// recive channel
+	err := <-status
+	getMovie := <-data
+
 	if err != nil {
 		return nil, err
 	}
+
+	// close all channel
+	close(status)
+	close(data)
 
 	return &pb.ReadMovieResponse{
 		Movie: &pb.Movie{
@@ -68,10 +93,25 @@ func (*ServerContext) GetMovies(ctx context.Context, req *pb.ReadMoviesRequest) 
 
 	repo := new(repository.RepositoryContext)
 
-	err, movies := repo.FindAllMovie()
+	// make chan status
+	status := make(chan error)
+
+	// make chat data
+	data := make(chan []*pb.Movie)
+
+	go repo.FindAllMovie(status, data)
+
+	// recive channel
+	err := <-status
+	movies := <-data
+
 	if err != nil {
 		return nil, err
 	}
+
+	// close all open channel
+	close(status)
+	close(data)
 
 	return &pb.ReadMoviesResponse{
 		Movies: movies,
@@ -81,10 +121,21 @@ func (*ServerContext) GetMovies(ctx context.Context, req *pb.ReadMoviesRequest) 
 func (*ServerContext) UpdateMovie(ctx context.Context, req *pb.UpdateMovieRequest) (*pb.UpdateMovieResponse, error) {
 
 	repo := new(repository.RepositoryContext)
-	err := repo.UpdateMovie(req.Movie.GetId(), req)
+
+	// make chan status
+	status := make(chan error)
+
+	go repo.UpdateMovie(req.Movie.GetId(), req, status)
+
+	// recive channel
+	err := <-status
+
 	if err != nil {
 		return nil, err
 	}
+
+	// close channel
+	close(status)
 
 	return &pb.UpdateMovieResponse{
 		Movie: &pb.Movie{
@@ -101,7 +152,14 @@ func (*ServerContext) DeleteMovie(ctx context.Context, req *pb.DeleteMovieReques
 
 	repo := new(repository.RepositoryContext)
 
-	err := repo.DeleteMovie(req.GetId())
+	// make chan status
+	status := make(chan error)
+
+	go repo.DeleteMovie(req.GetId(), status)
+
+	// recive channel
+	err := <-status
+
 	if err != nil {
 		return nil, err
 	}

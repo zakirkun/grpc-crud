@@ -12,25 +12,27 @@ import (
 type RepositoryContext struct {
 }
 
-func (r RepositoryContext) CreateMovie(data model.Movie) error {
+func (r RepositoryContext) CreateMovie(data model.Movie, status chan error) {
 	db, err := database.OpenDB()
 	if err != nil {
-		return err
+		status <- err
 	}
 
 	res := db.Create(&data)
 
 	if res.RowsAffected == 0 {
-		return errors.New("failed create movie")
+		err = errors.New("failed create movie")
+		status <- err
 	}
 
-	return nil
+	status <- nil
 }
 
-func (r RepositoryContext) FindMovie(id string) (error, *model.Movie) {
+func (r RepositoryContext) FindMovie(id string, status chan error, data chan *model.Movie) {
 	db, err := database.OpenDB()
 	if err != nil {
-		return err, nil
+		status <- err
+		data <- nil
 	}
 
 	var movie model.Movie
@@ -38,32 +40,37 @@ func (r RepositoryContext) FindMovie(id string) (error, *model.Movie) {
 	res := db.Find(&movie, "id = ?", id)
 
 	if res.RowsAffected == 0 {
-		return errors.New("movie not found"), nil
+		status <- errors.New("movie not found")
+		data <- nil
 	}
 
-	return nil, &movie
+	status <- nil
+	data <- &movie
 }
 
-func (r RepositoryContext) FindAllMovie() (error, []*pb.Movie) {
+func (r RepositoryContext) FindAllMovie(status chan error, data chan []*pb.Movie) {
 	db, err := database.OpenDB()
 	if err != nil {
-		return err, nil
+		status <- err
+		data <- nil
 	}
 
 	var movies []*pb.Movie
 
 	res := db.Find(&movies)
 	if res.RowsAffected == 0 {
-		return errors.New("movies not found"), nil
+		status <- errors.New("record empty")
+		data <- nil
 	}
 
-	return nil, movies
+	status <- nil
+	data <- movies
 }
 
-func (r RepositoryContext) UpdateMovie(id string, req *pb.UpdateMovieRequest) error {
+func (r RepositoryContext) UpdateMovie(id string, req *pb.UpdateMovieRequest, status chan error) {
 	db, err := database.OpenDB()
 	if err != nil {
-		return err
+		status <- err
 	}
 
 	var movie model.Movie
@@ -77,23 +84,23 @@ func (r RepositoryContext) UpdateMovie(id string, req *pb.UpdateMovieRequest) er
 	})
 
 	if res.RowsAffected == 0 {
-		return errors.New("movies not found")
+		status <- errors.New("movies not found")
 	}
 
-	return nil
+	status <- nil
 }
 
-func (r RepositoryContext) DeleteMovie(id string) error {
+func (r RepositoryContext) DeleteMovie(id string, status chan error) {
 	db, err := database.OpenDB()
 	if err != nil {
-		return err
+		status <- err
 	}
 
 	var movie model.Movie
 	res := db.Where("id=?", id).Delete(&movie)
 	if res.RowsAffected == 0 {
-		return errors.New("movies not found")
+		status <- errors.New("movies not found")
 	}
 
-	return nil
+	status <- nil
 }

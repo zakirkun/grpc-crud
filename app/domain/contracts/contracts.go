@@ -25,9 +25,9 @@ type ServiceGrpcServer interface {
 }
 
 type RepositoryGrpcServer interface {
-	CreateMovie(data model.Movie) error
-	FindMovie(id string) (error, *model.Movie)
-	FindAllMovie() (error, []*pb.Movie)
-	UpdateMovie(id string, req *pb.UpdateMovieRequest) error
-	DeleteMovie(id string) error
+	CreateMovie(data model.Movie, status chan error)
+	FindMovie(id string, status chan error, data chan *model.Movie)
+	FindAllMovie(status chan error, data chan []*pb.Movie)
+	UpdateMovie(id string, req *pb.UpdateMovieRequest, status chan error)
+	DeleteMovie(id string, status chan error)
 }

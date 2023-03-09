@@ -53,7 +53,7 @@ func (d deliverClientContext) GetMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, helper.RestMessage(http.StatusNotFound, "failed get movie", err.Error()))
 	}
 
-	ctx.JSON(http.StatusCreated, helper.RestMessage(http.StatusOK, "Success", gin.H{
+	ctx.JSON(http.StatusOK, helper.RestMessage(http.StatusOK, "Success", gin.H{
 		"movie": res.Movie,
 	}))
 }
@@ -65,7 +65,7 @@ func (d deliverClientContext) GetMovies(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, helper.RestMessage(http.StatusFound, "failed get movie", err.Error()))
 	}
 
-	ctx.JSON(http.StatusCreated, helper.RestMessage(http.StatusOK, "Success", gin.H{
+	ctx.JSON(http.StatusOK, helper.RestMessage(http.StatusOK, "Success", gin.H{
 		"movie": res.Movies,
 	}))
 }
@@ -94,7 +94,7 @@ func (d deliverClientContext) UpdateMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, helper.RestMessage(http.StatusFound, "failed update movie", err.Error()))
 	}
 
-	ctx.JSON(http.StatusCreated, helper.RestMessage(http.StatusOK, "Success", gin.H{
+	ctx.JSON(http.StatusOK, helper.RestMessage(http.StatusOK, "Success", gin.H{
 		"movie": res.Movie,
 	}))
 }
@@ -107,7 +107,7 @@ func (d deliverClientContext) DeleteMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, helper.RestMessage(http.StatusFound, "failed delete movie", err.Error()))
 	}
 
-	ctx.JSON(http.StatusCreated, helper.RestMessage(http.StatusOK, "Success", gin.H{
+	ctx.JSON(http.StatusOK, helper.RestMessage(http.StatusOK, "Success", gin.H{
 		"deleted": res.Success,
 	}))
 }
