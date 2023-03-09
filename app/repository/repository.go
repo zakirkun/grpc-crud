@@ -26,6 +26,9 @@ func (r RepositoryContext) CreateMovie(data model.Movie, status chan error) {
 	}
 
 	status <- nil
+
+	// close channel
+	close(status)
 }
 
 func (r RepositoryContext) FindMovie(id string, status chan error, data chan *model.Movie) {
@@ -46,6 +49,10 @@ func (r RepositoryContext) FindMovie(id string, status chan error, data chan *mo
 
 	status <- nil
 	data <- &movie
+
+	// close all channel
+	close(status)
+	close(data)
 }
 
 func (r RepositoryContext) FindAllMovie(status chan error, data chan []*pb.Movie) {
@@ -65,6 +72,10 @@ func (r RepositoryContext) FindAllMovie(status chan error, data chan []*pb.Movie
 
 	status <- nil
 	data <- movies
+
+	// close all open channel
+	close(status)
+	close(data)
 }
 
 func (r RepositoryContext) UpdateMovie(id string, req *pb.UpdateMovieRequest, status chan error) {
@@ -88,6 +99,9 @@ func (r RepositoryContext) UpdateMovie(id string, req *pb.UpdateMovieRequest, st
 	}
 
 	status <- nil
+
+	// close channel
+	close(status)
 }
 
 func (r RepositoryContext) DeleteMovie(id string, status chan error) {
@@ -103,4 +117,7 @@ func (r RepositoryContext) DeleteMovie(id string, status chan error) {
 	}
 
 	status <- nil
+
+	// close channel
+	close(status)
 }

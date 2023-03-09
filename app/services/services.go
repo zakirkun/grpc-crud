@@ -40,9 +40,6 @@ func (*ServerContext) CreateMovie(ctx context.Context, req *pb.CreateMovieReques
 		return nil, err
 	}
 
-	// close channel
-	close(status)
-
 	return &pb.CreateMovieResponse{
 		Movie: &pb.Movie{
 			Id:          movie.GetId(),
@@ -73,10 +70,6 @@ func (*ServerContext) GetMovie(ctx context.Context, req *pb.ReadMovieRequest) (*
 	if err != nil {
 		return nil, err
 	}
-
-	// close all channel
-	close(status)
-	close(data)
 
 	return &pb.ReadMovieResponse{
 		Movie: &pb.Movie{
@@ -109,10 +102,6 @@ func (*ServerContext) GetMovies(ctx context.Context, req *pb.ReadMoviesRequest) 
 		return nil, err
 	}
 
-	// close all open channel
-	close(status)
-	close(data)
-
 	return &pb.ReadMoviesResponse{
 		Movies: movies,
 	}, nil
@@ -133,9 +122,6 @@ func (*ServerContext) UpdateMovie(ctx context.Context, req *pb.UpdateMovieReques
 	if err != nil {
 		return nil, err
 	}
-
-	// close channel
-	close(status)
 
 	return &pb.UpdateMovieResponse{
 		Movie: &pb.Movie{
